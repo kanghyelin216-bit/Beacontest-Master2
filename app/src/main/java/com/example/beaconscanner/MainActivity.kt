@@ -242,6 +242,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendToServer(x: Double, y: Double) {
         // 현재 잡힌 비콘 중 RSSI(신호 세기) 평균값이 가장 높은(가장 가까운) 비콘 1개를 찾습니다.
+        android.util.Log.d("BeaconNetwork", "🚀 sendToServer 호출됨: x=$x, y=$y, 캐시크기=${beaconCache.size}")
         val strongestCached = beaconCache.values.maxByOrNull { it.rssiHistory.average() } ?: return
         val targetBeacon = strongestCached.beacon
 
