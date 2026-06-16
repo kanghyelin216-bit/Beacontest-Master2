@@ -240,24 +240,26 @@ class MainActivity : AppCompatActivity() {
 
     private val httpClient = OkHttpClient()
 
-    // 🟢 MainActivity.kt 의 sendToServer 함수를 이것으로 교체
     private fun sendToServer(x: Double, y: Double) {
         // 현재 잡힌 비콘 중 RSSI(신호 세기) 평균값이 가장 높은(가장 가까운) 비콘 1개를 찾습니다.
         val strongestCached = beaconCache.values.maxByOrNull { it.rssiHistory.average() } ?: return
         val targetBeacon = strongestCached.beacon
 
-        // 비콘의 Minor 값을 기준으로 A1~A6 매핑 (서버의 BEACON_MAP Key와 일치시킵니다)
-        // 팀의 실제 비콘 Minor 번호에 맞게 가공해야 합니다. (예시: minor가 29433이면 A1)
+        // 비콘의 Minor 값을 기준으로 A1~A6 매핑
         val beaconId = when(targetBeacon.id3?.toInt()) {
             29433 -> "A1"
             29445 -> "A2"
             29430 -> "A3"
             29429 -> "A4"
             29427 -> "A5"
-            else -> "A1" // 기본값
+            else -> "A1"
         }
 
-        val json = """{"beaconId":"$beaconId"}""" // 서버가 원하는 Key 명칭으로 포맷팅
+        // ✅ 미터 → 픽셀 변환 후 x, y 함께 전송 (서버가 요구하는 형식)
+        val pixelX = (x * BeaconConfig.PIXEL_SCALE).toInt()
+        val pixelY = (y * BeaconConfig.PIXEL_SCALE).toInt()
+
+        val json = """{"beaconId":"$beaconId","x":$pixelX,"y":$pixelY}"""  // 기존 beaconId 유지 + x,y 추가
         val body = json.toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
             .url("${BeaconConfig.SERVER_URL}/beacon")
@@ -270,13 +272,13 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    android.util.Log.d("BeaconNetwork", "🌐 비콘 ID 전송 성공 -> $beaconId")
+                    android.util.Log.d("BeaconNetwork", "🌐 전송 성공 -> beaconId=$beaconId, x=$pixelX, y=$pixelY")
                 }
                 response.close()
             }
         })
     }
-    // 🟢 MainActivity.kt 맨 아래에 있는 beaconKey 함수를 이 코드로 덮어씌우세요.
+
     private fun beaconKey(beacon: Beacon): String {
         // 1. 비콘에서 받아온 UUID에서 하이픈(-)을 전부 제거하고 대문자로 통일합니다.
         val rawUuid = beacon.id1?.toString()?.replace("-", "")?.uppercase() ?: "UNKNOWN"

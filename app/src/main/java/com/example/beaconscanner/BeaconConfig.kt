@@ -36,5 +36,5 @@ object BeaconConfig {
     var GRID_CELL_SIZE = 1.0
 
     // ⚠️ [수정 완료] localhost에서 팀의 하마치 공유 가상 IP 주소로 강제 변경!
-    const val SERVER_URL = "http://192.168.219.109:3000"
+    const val SERVER_URL = "http://172.18.32.248:3000"
 }
