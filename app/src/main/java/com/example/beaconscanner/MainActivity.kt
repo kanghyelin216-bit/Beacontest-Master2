@@ -16,34 +16,25 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import okhttp3.Call
-import okhttp3.Callback
 import org.altbeacon.beacon.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import java.io.IOException
+import java.util.UUID
+import java.util.concurrent.Executors
+import kotlin.collections.ArrayDeque
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var beaconManager: BeaconManager
     private lateinit var adapter: BeaconAdapter
 
-    // 비콘 캐시
     private val beaconCache = mutableMapOf<String, CachedBeacon>()
-
-    private var lastSentPosition: LocationEstimator.Position? = null
-
-    // 화면 갱신용 Handler
     private val handler = Handler(Looper.getMainLooper())
-    private val refreshInterval = 500L  // 0.5초마다 화면 갱신
+    private val refreshInterval = 1000L  // 1초 간격 수집 및 서버 전송
+    private val beaconTimeoutMs = 5000L
 
-    // 비콘이 이 시간(ms) 동안 안 잡히면 목록에서 제거
-    private val beaconTimeoutMs = 4000L
+    private val networkExecutor = Executors.newSingleThreadExecutor()
 
     private lateinit var btnScan: Button
     private lateinit var btnStop: Button
@@ -53,49 +44,96 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvEmpty: TextView
     private lateinit var tvLocation: TextView
 
+    private lateinit var scannerId: String
+    private val mapId = "6a4e268e4b23f93d45141083" // 리액트 몽고DB ObjectId 포맷 동기화
+    private var hasOpenedWebApp = false
+
     companion object {
-        private const val PERMISSION_REQUEST_CODE = 1001
+        private const val PERMISSION_REQUEST_CODES = 1001
     }
 
-    // 캐시 항목
     data class CachedBeacon(
         val beacon: Beacon,
         val lastSeenMs: Long,
-        val rssiHistory: ArrayDeque<Int> = ArrayDeque(5) // 최근 5개 RSSI
+        val rssiHistory: ArrayDeque<Int> = ArrayDeque()
     )
 
-    // 화면 갱신 루프
+    // 🟢 제공해주신 실제 비콘 스펙을 기반으로 데이터 모델 정의
+    data class TargetBeaconInfo(
+        val beaconId: String,  // 리액트가 인식할 ID (A1~A6)
+        val major: Int,
+        val minor: Int
+    )
+
     private val refreshRunnable = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
 
-            // 오래된 비콘 제거
+            // 1. 유효시간 지난 비콘 제거
             val expired = beaconCache.entries.filter { now - it.value.lastSeenMs > beaconTimeoutMs }
             expired.forEach { beaconCache.remove(it.key) }
 
-            // UI 갱신
             updateUI()
-            val distances = beaconCache.values.mapNotNull { cached ->
-                val key = beaconKey(cached.beacon)
-                val configInfo = BeaconConfig.BEACONS.find { it.key == key } ?: return@mapNotNull null
-                val avgRssi = cached.rssiHistory.average().toInt()
-                val dist = LocationEstimator.rssiToDistance(avgRssi, configInfo.txPower)
-                key to dist
-            }
-                .toMap()
-            val position = LocationEstimator.estimatePosition(distances)
-            if (position != null) {
-                val last = lastSentPosition
-                val moved = last == null ||
-                        Math.hypot(position.x - last.x, position.y - last.y) > 0.3 // 30cm 이상 이동 시만 전송
-                if (moved) {
-                    sendToServer(position.x, position.y )
-                    lastSentPosition = position
+
+            // 2. 제공해주신 6개 실제 비콘 스펙 하드코딩 매핑 (Major는 모두 동일하므로 확실한 식별을 위해 Minor 기준 매핑)
+            val targetBeacons = listOf(
+                TargetBeaconInfo("A1", 40011, 29433), // AEB9
+                TargetBeaconInfo("A2", 40011, 29445), // AEC5
+                TargetBeaconInfo("A3", 40011, 29430), // AEB6
+                TargetBeaconInfo("A4", 40011, 29429), // AEB5
+                TargetBeaconInfo("A5", 40011, 29427), // AEB3
+                TargetBeaconInfo("A6", 40011, 29438)  // AEBE
+            )
+
+            val beaconJsonList = mutableListOf<String>()
+
+            targetBeacons.forEach { target ->
+                // 캐시에서 Major와 Minor가 동시에 일치하는 비콘을 찾습니다.
+                val cached = beaconCache.values.find {
+                    it.beacon.id2?.toInt() == target.major && it.beacon.id3?.toInt() == target.minor
                 }
-                tvLocation.text = "추정 위치 : X=%.2f m, Y = %.2f m".format(position.x, position.y)
-            } else {
-                tvLocation.text = "위치 추정 중 ... (등록 비콘 감지 필요)"
+
+                if (cached != null && cached.rssiHistory.isNotEmpty()) {
+                    val sortedRssi = cached.rssiHistory.sorted()
+
+                    // 정밀 보정을 위해 앞뒤 튀는 값 다듬기 (트리밍)
+                    val trimCount = (sortedRssi.size * 0.2).toInt()
+                    val trimmedList = if (sortedRssi.size >= 5) {
+                        sortedRssi.subList(trimCount, sortedRssi.size - trimCount)
+                    } else {
+                        sortedRssi
+                    }
+
+                    val avgRssi = if (trimmedList.isNotEmpty()) trimmedList.average().toInt() else -95
+
+                    // TxPower가 없는 경우 기본값 -59 처리하여 무한대 거리 연산 방지
+                    val txPower = if (cached.beacon.txPower != 0) cached.beacon.txPower else -59
+                    val distance = Math.pow(10.0, (txPower - avgRssi) / (10.0 * 2.0))
+
+                    // 🟢 리액트가 원하는 "A1"~"A6" 포맷으로 JSON을 최종 조립합니다.
+                    val item = """{"beaconId":"${target.beaconId}","rssi":$avgRssi,"distance":${String.format("%.2f", distance)}}"""
+                    beaconJsonList.add(item)
+                } else {
+                    // 주변에 감지 안 되는 비콘 데이터 유실 방지 기본값 패킹
+                    val item = """{"beaconId":"${target.beaconId}","rssi":-100,"distance":99.0}"""
+                    beaconJsonList.add(item)
+                }
             }
+
+            // 3. 백엔드 최종 스펙 바디 포맷 조립
+            val beaconsArrayJson = beaconJsonList.joinToString(",", "[", "]")
+            val finalJsonBody = """
+                {
+                  "scannerId": "$scannerId",
+                  "mapId": "$mapId",
+                  "beacons": $beaconsArrayJson
+                }
+            """.trimIndent()
+
+            // 4. 백엔드로 데이터 다이렉트 전송 실행
+            sendToServer(finalJsonBody)
+            tvLocation.text = "서버로 실제 비콘 데이터 전송 중 (A1~A6 매핑 완벽)"
+
             handler.postDelayed(this, refreshInterval)
         }
     }
@@ -103,6 +141,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        getOrCreateScannerId()
 
         btnScan  = findViewById(R.id.btnScan)
         btnStop  = findViewById(R.id.btnStop)
@@ -112,39 +152,55 @@ class MainActivity : AppCompatActivity() {
         tvEmpty  = findViewById(R.id.tvEmpty)
         tvLocation = findViewById(R.id.tvLocation)
 
+        tvLocation.setOnClickListener { openWebApp() }
+
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         adapter = BeaconAdapter(mutableListOf())
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         beaconManager = BeaconManager.getInstanceForApplication(this)
-
-        // 스캔 주기 설정
-        beaconManager.foregroundScanPeriod = 2000L       // 2초 스캔
-        beaconManager.foregroundBetweenScanPeriod = 0L  // 연속 스캔
+        beaconManager.foregroundScanPeriod = 500L
+        beaconManager.foregroundBetweenScanPeriod = 250L
 
         btnScan.setOnClickListener { checkPermissionsAndScan() }
         btnStop.setOnClickListener { stopScan() }
 
         val region = Region("all-beacons", null, null, null)
         val regionViewModel = beaconManager.getRegionViewModel(region)
-        regionViewModel.rangedBeacons.observe(this) { beacons ->
+
+        regionViewModel.rangedBeacons.observe(this, Observer { beaconsCollection ->
             val now = System.currentTimeMillis()
-            for (beacon in beacons) {
+            beaconsCollection?.forEach { beacon ->
                 val key = beaconKey(beacon)
                 val existing = beaconCache[key]
-                val history = existing?.rssiHistory ?: ArrayDeque(5)
-                if (history.size >= 5) history.removeFirst()
+
+                val history = existing?.rssiHistory ?: ArrayDeque()
+                if (history.size >= 15) {
+                    history.removeFirst()
+                }
                 history.addLast(beacon.rssi)
+
                 beaconCache[key] = CachedBeacon(
                     beacon = beacon,
                     lastSeenMs = now,
                     rssiHistory = history
                 )
             }
-        }
+        })
 
         checkBluetooth()
+    }
+
+    private fun getOrCreateScannerId() {
+        val sharedPref = getSharedPreferences("BeaconScannerPrefs", Context.MODE_PRIVATE)
+        var savedId = sharedPref.getString("scanner_id", null)
+        if (savedId == null) {
+            savedId = "android_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8).lowercase()
+            sharedPref.edit().putString("scanner_id", savedId).apply()
+        }
+        scannerId = savedId
+        android.util.Log.d("BeaconNetwork", "📱 내 기기 발급 스캐너 ID: $scannerId")
     }
 
     private fun checkBluetooth() {
@@ -154,23 +210,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ── 🛠️ [권한 충돌 전면 수정] 안전하게 필수 권한만 동시 요청하도록 변경 ──
     private fun checkPermissionsAndScan() {
         val permissions = mutableListOf<String>()
-
-        // 안드로이드 12 (API 31) 이상일 때 블루투스 전용 권한 추가
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissions.add(Manifest.permission.BLUETOOTH_SCAN)
             permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
-
-        // 일반 위치 권한 필수 추가 (비콘용)
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
 
-        // ⚠️ 충돌을 일으키는 ACCESS_BACKGROUND_LOCATION 권한 요청 코드는 완벽히 제거했습니다.
-
-        // 허용되지 않은 권한이 있는지 체크
         val missing = permissions.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
@@ -178,8 +226,7 @@ class MainActivity : AppCompatActivity() {
         if (missing.isEmpty()) {
             startScan()
         } else {
-            // 깔끔하게 안드로이드 정식 승인 팝업을 띄웁니다.
-            ActivityCompat.requestPermissions(this, missing.toTypedArray(), PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(this, missing.toTypedArray(), PERMISSION_REQUEST_CODES)
         }
     }
 
@@ -187,13 +234,12 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE &&
+        if (requestCode == PERMISSION_REQUEST_CODES &&
             grantResults.isNotEmpty() &&
             grantResults.all { it == PackageManager.PERMISSION_GRANTED }
         ) {
             startScan()
         } else {
-            // 여전히 거절이 난다면 사용자에게 안내 메시지를 띄웁니다.
             Toast.makeText(this, "필수 블루투스/위치 권한 승인이 필요합니다.", Toast.LENGTH_LONG).show()
         }
     }
@@ -205,9 +251,23 @@ class MainActivity : AppCompatActivity() {
         tvStatus.text = "● 스캔 중"
         tvStatus.setTextColor(Color.parseColor("#22C55E"))
         tvEmpty.text = "스캔 중... 비콘을 탐색하고 있습니다"
-
-        // 갱신 시작
         handler.post(refreshRunnable)
+
+        if (!hasOpenedWebApp) {
+            hasOpenedWebApp = true
+            openWebApp()
+        }
+    }
+
+    private fun openWebApp() {
+        try {
+            val url = "http://192.168.219.106:5173/?sid=$scannerId"
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+            startActivity(intent)
+            android.util.Log.d("BeaconNetwork", "🌐 웹앱 오픈: $url")
+        } catch (e: Exception) {
+            Toast.makeText(this, "웹앱을 열 수 없습니다: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun stopScan() {
@@ -228,67 +288,60 @@ class MainActivity : AppCompatActivity() {
         val strong = beaconCache.values.count { it.rssiHistory.average() >= -70 }
         tvCount.text = "${beaconCache.size}"
         tvStrong.text = "$strong"
-        tvEmpty.visibility = if (beaconCache.isEmpty())
-            View.VISIBLE else View.GONE
+        tvEmpty.visibility = if (beaconCache.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(refreshRunnable)
         beaconManager.stopRangingBeacons(Region("all-beacons", null, null, null))
+        networkExecutor.shutdown()
     }
 
-    private val httpClient = OkHttpClient()
+    private fun sendToServer(jsonBody: String) {
+        android.util.Log.d("BeaconNetwork", "🚀 [서버 전송 시도]\n$jsonBody")
+        val targetUrl = "http://192.168.219.106:4000/api/location"
 
-    private fun sendToServer(x: Double, y: Double) {
-        // 현재 잡힌 비콘 중 RSSI(신호 세기) 평균값이 가장 높은(가장 가까운) 비콘 1개를 찾습니다.
-        android.util.Log.d("BeaconNetwork", "🚀 sendToServer 호출됨: x=$x, y=$y, 캐시크기=${beaconCache.size}")
-        val strongestCached = beaconCache.values.maxByOrNull { it.rssiHistory.average() } ?: return
-        val targetBeacon = strongestCached.beacon
+        networkExecutor.execute {
+            var urlConnection: java.net.HttpURLConnection? = null
+            try {
+                val url = java.net.URL(targetUrl)
+                urlConnection = url.openConnection() as java.net.HttpURLConnection
 
-        // 비콘의 Minor 값을 기준으로 A1~A6 매핑
-        val beaconId = when(targetBeacon.id3?.toInt()) {
-            29433 -> "A1"
-            29445 -> "A2"
-            29430 -> "A3"
-            29429 -> "A4"
-            29427 -> "A5"
-            else -> "A1"
-        }
+                urlConnection.requestMethod = "POST"
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                urlConnection.setRequestProperty("Connection", "keep-alive")
+                urlConnection.doOutput = true
 
-        // ✅ 미터 → 픽셀 변환 후 x, y 함께 전송 (서버가 요구하는 형식)
-        val pixelX = (x * BeaconConfig.PIXEL_SCALE).toInt()
-        val pixelY = (y * BeaconConfig.PIXEL_SCALE).toInt()
+                urlConnection.connectTimeout = 3000
+                urlConnection.readTimeout = 3000
 
-        val json = """{"beaconId":"$beaconId","x":$pixelX,"y":$pixelY}"""  // 기존 beaconId 유지 + x,y 추가
-        val body = json.toRequestBody("application/json".toMediaType())
-        val request = Request.Builder()
-            .url("${BeaconConfig.SERVER_URL}/beacon")
-            .post(body)
-            .build()
+                val outputStream = urlConnection.outputStream
+                val writer = java.io.BufferedWriter(java.io.OutputStreamWriter(outputStream, "UTF-8"))
+                writer.write(jsonBody)
+                writer.flush()
+                writer.close()
+                outputStream.close()
 
-        httpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                android.util.Log.e("BeaconNetwork", "🌐 서버 전송 실패: ${e.message}")
-            }
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    android.util.Log.d("BeaconNetwork", "🌐 전송 성공 -> beaconId=$beaconId, x=$pixelX, y=$pixelY")
+                val responseCode = urlConnection.responseCode
+                if (responseCode == 200 || responseCode == 201) {
+                    android.util.Log.d("BeaconNetwork", "🔥 [서버 전송 완벽 성공] 백엔드 데이터 적재 완료")
+                } else {
+                    android.util.Log.e("BeaconNetwork", "❌ [서버 응답 에러] HTTP 코드: $responseCode")
                 }
-                response.close()
+
+            } catch (e: Exception) {
+                android.util.Log.e("BeaconNetwork", "❌ [통신 실패 상세 원인]: ${e.localizedMessage}")
+            } finally {
+                urlConnection?.disconnect()
             }
-        })
+        }
     }
 
     private fun beaconKey(beacon: Beacon): String {
-        // 1. 비콘에서 받아온 UUID에서 하이픈(-)을 전부 제거하고 대문자로 통일합니다.
         val rawUuid = beacon.id1?.toString()?.replace("-", "")?.uppercase() ?: "UNKNOWN"
         val major = beacon.id2?.toInt() ?: 0
         val minor = beacon.id3?.toInt() ?: 0
-
-        // 2. 이 로그를 통해 실제 안드로이드가 비콘을 찾았을 때 어떤 Key 모양을 만들어내는지 로그캣(Logcat)에서 확인용
-        android.util.Log.d("BeaconScanKey", "🔍 감지된 비콘 생성 Key: $rawUuid-$major-$minor")
-
         return "$rawUuid-$major-$minor"
     }
 }
