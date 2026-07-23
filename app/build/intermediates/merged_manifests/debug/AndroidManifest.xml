@@ -8,7 +8,20 @@
         android:minSdkVersion="26"
         android:targetSdkVersion="34" />
 
-    <!-- Android 11 이하 호환 -->
+    <!-- 1. 기본 네트워크 권한 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- 2. 백그라운드 구동을 위한 Foreground Service 권한 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- 3. 위치 권한 (BLE 스캔 및 실내 위치 추정 필수) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- 4. Bluetooth 권한 (Android 11 이하 호환) -->
     <uses-permission
         android:name="android.permission.BLUETOOTH"
         android:maxSdkVersion="30"
@@ -18,22 +31,15 @@
         android:maxSdkVersion="30"
         android:required="false" />
 
-    <!-- Android 12(s) 이상 전용 -->
+    <!-- 5. Bluetooth 권한 (Android 12 이상 전용) -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-    <!-- 위치 권한 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- BLE 하드웨어 필수 선언 -->
+    <!-- 6. BLE 하드웨어 필수 선언 -->
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <permission
@@ -55,6 +61,8 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/Theme.BeaconScanner" >
+
+        <!-- 런처 메인 액티비티 -->
         <activity
             android:name="com.example.beaconscanner.MainActivity"
             android:exported="true" >
@@ -64,6 +72,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 백그라운드 BLE 스캔 전담 서비스 -->
+        <service
+            android:name="com.example.beaconscanner.BeaconScanService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <receiver
             android:name="org.altbeacon.beacon.startup.StartupBroadcastReceiver"

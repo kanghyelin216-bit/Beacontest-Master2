@@ -4,7 +4,7 @@
             "outputFile": "com.example.beaconscanner.app-mergeDebugResources-2:/values-w600dp-land-v13/values-w600dp-land-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Samba\\.gradle\\caches\\8.9\\transforms\\af9a0dc8d3ffb8a3a826f5414110f769\\transformed\\material-1.11.0\\res\\values-w600dp-land-v13\\values-w600dp-land-v13.xml",
+                    "source": "C:\\Users\\Samba\\.gradle\\caches\\8.9\\transforms\\68ffbc1300f25f8f48248f616f3c567b\\transformed\\material-1.12.0\\res\\values-w600dp-land-v13\\values-w600dp-land-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

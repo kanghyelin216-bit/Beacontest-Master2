@@ -2,7 +2,7 @@ import java.util.Properties
 
 val localProps = Properties().apply {
     val f = rootProject.file("local.properties")
-    if(f.exists()) load(f.inputStream())
+    if (f.exists()) load(f.inputStream())
 }
 
 plugins {
@@ -20,6 +20,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        // local.properties에서 SERVER_IP를 읽어오며, 기본값 지정
         buildConfigField(
             "String",
             "SERVER_IP",
@@ -30,26 +32,46 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
+
     buildFeatures {
         buildConfig = true
     }
 }
 
 dependencies {
+    // 🟢 1. 핵심: Lifecycle & Service 라이브러리 (LifecycleService 빨간줄 해결원인)
+    implementation("androidx.lifecycle:lifecycle-service:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+
+    // 🟢 2. BLE Beacon 스캔 라이브러리
     implementation("org.altbeacon:android-beacon-library:2.20.3")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
+
+    // 🟢 3. 네트워크 통신 (OkHttp)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // 🟢 4. UI 및 안드로이드 기본 컴포넌트
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // 🟢 5. 비동기 처리를 위한 Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 }

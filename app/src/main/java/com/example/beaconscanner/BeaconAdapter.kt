@@ -10,8 +10,8 @@ import org.altbeacon.beacon.Beacon
 class BeaconAdapter(private val beacons: MutableList<Beacon>) :
     RecyclerView.Adapter<BeaconAdapter.ViewHolder>() {
 
-    // 비콘 캐시 참조
-    private var cache: Map<String, MainActivity.CachedBeacon> = emptyMap()
+    // 독립 분리된 CachedBeacon 참조
+    private var cache: Map<String, CachedBeacon> = emptyMap()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvName: TextView = view.findViewById(R.id.tvName)
@@ -32,17 +32,20 @@ class BeaconAdapter(private val beacons: MutableList<Beacon>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val beacon = beacons[position]
-        val cached = cache[beacon.bluetoothAddress]
 
-        // 최근 5회 RSSI 평균
-        val avgRssi = cached?.rssiHistory?.average()?.toInt() ?: beacon.rssi
+        // MAC 주소 또는 Service Key 형태로 캐시에서 조회
+        val key = beaconKey(beacon)
+        val cached = cache[key] ?: cache[beacon.bluetoothAddress]
+
+        // 최근 RSSI 히스토리 평균값 계산
+        val avgRssi = cached?.rssiHistory?.takeIf { it.isNotEmpty() }?.average()?.toInt() ?: beacon.rssi
         val rawRssi = beacon.rssi
 
-        // 이름
+        // 비콘 이름
         val name = beacon.bluetoothName?.takeIf { it.isNotBlank() } ?: "(이름 없음)"
         holder.tvName.text = name
 
-        // ID
+        // 비콘 ID
         val id1 = beacon.id1?.toString()
         val id2 = beacon.id2?.toString()
         val id3 = beacon.id3?.toString()
@@ -53,38 +56,45 @@ class BeaconAdapter(private val beacons: MutableList<Beacon>) :
         }
         holder.tvId.text = idText
 
-        // RSSI 표시 (평균값)
+        // RSSI 및 신호 세기 라벨 표시
         holder.tvRssi.text = "$avgRssi dBm"
         holder.tvRssi.setTextColor(BeaconUtils.rssiColor(avgRssi))
         holder.tvSignalLabel.text = "${BeaconUtils.rssiLabel(avgRssi)} (현재: $rawRssi)"
         holder.tvSignalLabel.setTextColor(BeaconUtils.rssiColor(avgRssi))
 
-        // 거리 계산
-        val configTxPower = BeaconConfig.BEACONS.find {
-            it.key == "${beacon.id1?.toString()?.uppercase()}-${beacon.id2?.toInt()}-${beacon.id3?.toInt()}"
-        }?.txPower ?: beacon.txPower
+        // 거리 계산 (Path Loss Model 적용)
+        val beaconKeyStr = "${id1?.uppercase()}-${beacon.id2?.toInt()}-${beacon.id3?.toInt()}"
+        val configTxPower = BeaconConfig.BEACONS.find { it.key == beaconKeyStr }?.txPower ?: beacon.txPower
         val dist = LocationEstimator.rssiToDistance(avgRssi, configTxPower)
+
         holder.tvDistance.text = "거리: ${"%.2f".format(dist)} m"
         holder.tvTxPower.text = "TX: ${beacon.txPower} dBm"
         holder.tvMac.text = "MAC: ${beacon.bluetoothAddress}"
 
-        // 비콘 타입
+        // 비콘 타입 분류
         val type = when {
-            beacon.serviceUuid == 0xFEAA                -> "Eddystone"
-            id1 != null && id2 != null && id3 != null   -> "iBeacon"
-            id1 != null && id2 != null                  -> "AltBeacon"
-            id1 != null                                 -> "AltBeacon"
-            else                                        -> "BLE Device"
+            beacon.serviceUuid == 0xFEAA -> "Eddystone"
+            id1 != null && id2 != null && id3 != null -> "iBeacon"
+            id1 != null && id2 != null -> "AltBeacon"
+            id1 != null -> "AltBeacon"
+            else -> "BLE Device"
         }
         holder.tvType.text = type
     }
 
     override fun getItemCount() = beacons.size
 
-    fun updateBeacons(newBeacons: List<Beacon>, newCache: Map<String, MainActivity.CachedBeacon>) {
+    fun updateBeacons(newBeacons: List<Beacon>, newCache: Map<String, CachedBeacon>) {
         cache = newCache
         beacons.clear()
         beacons.addAll(newBeacons)
         notifyDataSetChanged()
+    }
+
+    private fun beaconKey(beacon: Beacon): String {
+        val rawUuid = beacon.id1?.toString()?.replace("-", "")?.uppercase() ?: "UNKNOWN"
+        val major = beacon.id2?.toInt() ?: 0
+        val minor = beacon.id3?.toInt() ?: 0
+        return "$rawUuid-$major-$minor"
     }
 }

@@ -21,7 +21,7 @@ object BeaconConfig {
         BeaconInfo("E2C56DB5DFFB48D2B060D0F5A71096E0", major = 40011, minor = 29430, x = 4.0,  y = 8.5 ),  // AEB6
         BeaconInfo("E2C56DB5DFFB48D2B060D0F5A71096E0", major = 40011, minor = 29429, x = 0.8,  y = 16.0),  // AEB5
         BeaconInfo("E2C56DB5DFFB48D2B060D0F5A71096E0", major = 40011, minor = 29427, x = 7.2,  y = 16.0),  // AEB3
-        BeaconInfo("E2C56DB5DFFB48D2B060D0F5A71096E0", major = 40011, minor = 29438, x = 7.62,  y =3.1),    // AEBE
+        BeaconInfo("E2C56DB5DFFB48D2B060D0F5A71096E0", major = 40011, minor = 29438, x = 7.62,  y =3.1),   // AEBE
 
     )
 
@@ -38,7 +38,7 @@ object BeaconConfig {
 
     // ── 🛠️ 주소 설정 구간 ──
     // ⚠️ 팀원 각자가 본인 PC의 사설 IP 주소를 조사한 뒤 '192.168.0.2' 대신 넣어주어야 로직이 동작합니다.
-    private const val CURRENT_PC_IP = "192.168.219.106"
+    private const val CURRENT_PC_IP = "192.168.219.104"
 
     const val SERVER_URL = "http://$CURRENT_PC_IP:4000/api/location"
     const val WEB_APP_URL = "http://$CURRENT_PC_IP:5173"

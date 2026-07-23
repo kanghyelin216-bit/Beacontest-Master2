@@ -8,257 +8,281 @@
 8        android:minSdkVersion="26"
 9        android:targetSdkVersion="34" />
 10
-11    <!-- Android 11 이하 호환 -->
-12    <uses-permission
-12-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:6:5-94
-13        android:name="android.permission.BLUETOOTH"
-13-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:6:22-65
-14        android:maxSdkVersion="30"
-14-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:6:66-92
-15        android:required="false" />
-15-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:9:9-33
-16    <uses-permission
-16-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:7:5-100
-17        android:name="android.permission.BLUETOOTH_ADMIN"
-17-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:7:22-71
-18        android:maxSdkVersion="30"
-18-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:7:72-98
-19        android:required="false" />
-19-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:12:9-33
-20
-21    <!-- Android 12(s) 이상 전용 -->
-22    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-22-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:10:5-11:30
-22-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:10:22-70
-23    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-23-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:12:5-75
-23-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:12:22-73
-24
-25    <!-- 위치 권한 -->
-26    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-26-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:15:5-78
-26-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:15:22-76
-27    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-27-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:16:5-80
-27-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:16:22-78
-28    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-28-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:17:5-84
-28-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:17:22-82
-29    <uses-permission android:name="android.permission.INTERNET" />
-29-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:18:5-66
-29-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:18:22-64
-30
-31    <!-- BLE 하드웨어 필수 선언 -->
-32    <uses-feature
-32-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:21:5-89
-33        android:name="android.hardware.bluetooth_le"
-33-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:21:19-63
-34        android:required="true" />
-34-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:21:64-87
-35
-36    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-36-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:13:5-86
-36-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:13:22-83
-37    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-37-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:14:5-81
-37-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:14:22-78
-38
-39    <permission
-39-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
-40        android:name="com.example.beaconscanner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-40-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
-41        android:protectionLevel="signature" />
-41-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+11    <!-- 1. 기본 네트워크 권한 -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:6:5-67
+12-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:6:22-64
+13
+14    <!-- 2. 백그라운드 구동을 위한 Foreground Service 권한 -->
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+15-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:9:5-77
+15-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:9:22-74
+16    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+16-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:10:5-86
+16-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:10:22-83
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:11:5-77
+17-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:11:22-74
+18
+19    <!-- 3. 위치 권한 (BLE 스캔 및 실내 위치 추정 필수) -->
+20    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+20-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:14:5-79
+20-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:14:22-76
+21    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+21-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:15:5-81
+21-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:15:22-78
+22    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+22-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:16:5-85
+22-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:16:22-82
+23
+24    <!-- 4. Bluetooth 권한 (Android 11 이하 호환) -->
+25    <uses-permission
+25-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:19:5-95
+26        android:name="android.permission.BLUETOOTH"
+26-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:19:22-65
+27        android:maxSdkVersion="30"
+27-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:19:66-92
+28        android:required="false" />
+28-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:9:9-33
+29    <uses-permission
+29-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:20:5-101
+30        android:name="android.permission.BLUETOOTH_ADMIN"
+30-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:20:22-71
+31        android:maxSdkVersion="30"
+31-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:20:72-98
+32        android:required="false" />
+32-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:12:9-33
+33
+34    <!-- 5. Bluetooth 권한 (Android 12 이상 전용) -->
+35    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+35-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:23:5-93
+35-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:23:22-70
+36    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+36-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:24:5-76
+36-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:24:22-73
+37
+38    <!-- 6. BLE 하드웨어 필수 선언 -->
+39    <uses-feature
+39-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:27:5-90
+40        android:name="android.hardware.bluetooth_le"
+40-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:27:19-63
+41        android:required="true" />
+41-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:27:64-87
 42
-43    <uses-permission android:name="com.example.beaconscanner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-43-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
-43-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+43    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+43-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:14:5-81
+43-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:14:22-78
 44
-45    <application
-45-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:23:5-40:19
-46        android:name="com.example.beaconscanner.App"
-46-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:24:9-28
-47        android:allowBackup="true"
-47-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:25:9-35
-48        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-48-->[androidx.core:core:1.12.0] C:\Users\Samba\.gradle\caches\8.9\transforms\7066eb93bc0f412ada0c124253e67c33\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
-49        android:debuggable="true"
-50        android:extractNativeLibs="false"
-51        android:icon="@mipmap/ic_launcher"
-51-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:26:9-43
-52        android:label="Beacon Scanner"
-52-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:27:9-39
-53        android:networkSecurityConfig="@xml/network_security_config"
-53-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:31:9-69
-54        android:roundIcon="@mipmap/ic_launcher_round"
-54-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:28:9-54
-55        android:supportsRtl="true"
-55-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:29:9-35
-56        android:testOnly="true"
-57        android:theme="@style/Theme.BeaconScanner" >
-57-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:30:9-51
-58        <activity
-58-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:32:9-39:20
-59            android:name="com.example.beaconscanner.MainActivity"
-59-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:33:13-41
-60            android:exported="true" >
-60-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:34:13-36
-61            <intent-filter>
-61-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:35:13-38:29
-62                <action android:name="android.intent.action.MAIN" />
-62-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:36:17-68
-62-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:36:25-66
-63
-64                <category android:name="android.intent.category.LAUNCHER" />
-64-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:37:17-76
-64-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:37:27-74
-65            </intent-filter>
-66        </activity>
-67
-68        <receiver
-68-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:18:9-26:20
-69            android:name="org.altbeacon.beacon.startup.StartupBroadcastReceiver"
-69-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:19:13-81
-70            android:exported="false" >
-70-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:20:13-37
-71            <intent-filter>
-71-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:21:13-25:29
-72                <action android:name="android.intent.action.BOOT_COMPLETED" />
-72-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:22:17-79
-72-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:22:25-76
-73                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-73-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:23:17-87
-73-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:23:25-84
-74                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-74-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:24:17-90
-74-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:24:25-87
-75            </intent-filter>
-76        </receiver>
-77
-78        <service
-78-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:28:9-34:38
-79            android:name="org.altbeacon.beacon.service.BeaconService"
-79-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:29:13-70
-80            android:enabled="true"
-80-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:30:13-35
-81            android:exported="false"
-81-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:31:13-37
-82            android:foregroundServiceType="location"
-82-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:32:13-53
-83            android:isolatedProcess="false"
-83-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:33:13-44
-84            android:label="beacon" />
-84-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:34:13-35
-85        <service
-85-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:35:9-38:40
-86            android:name="org.altbeacon.beacon.BeaconIntentProcessor"
-86-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:36:13-70
-87            android:enabled="true"
-87-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:37:13-35
-88            android:exported="false" />
-88-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:38:13-37
-89        <service
-89-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:39:9-49:19
-90            android:name="org.altbeacon.beacon.service.ScanJob"
-90-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:40:13-64
-91            android:exported="false"
-91-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:41:13-37
-92            android:permission="android.permission.BIND_JOB_SERVICE" >
-92-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:42:13-69
-93            <meta-data
-93-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:43:13-45:45
-94                android:name="immediateScanJobId"
-94-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:44:17-50
-95                android:value="208352939" />
-95-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:45:17-42
-96            <meta-data
-96-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:46:13-48:45
-97                android:name="periodicScanJobId"
-97-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:47:17-49
-98                android:value="208352940" />
-98-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:48:17-42
-99        </service>
+45    <permission
+45-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+46        android:name="com.example.beaconscanner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+46-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+47        android:protectionLevel="signature" />
+47-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+48
+49    <uses-permission android:name="com.example.beaconscanner.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+49-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+49-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+50
+51    <application
+51-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:29:5-56:19
+52        android:name="com.example.beaconscanner.App"
+52-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:30:9-28
+53        android:allowBackup="true"
+53-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:31:9-35
+54        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+54-->[androidx.core:core:1.13.1] C:\Users\Samba\.gradle\caches\8.9\transforms\9aaa10055b410fd52ca3ed9a725a55b7\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+55        android:debuggable="true"
+56        android:extractNativeLibs="false"
+57        android:icon="@mipmap/ic_launcher"
+57-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:32:9-43
+58        android:label="Beacon Scanner"
+58-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:33:9-39
+59        android:networkSecurityConfig="@xml/network_security_config"
+59-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:37:9-69
+60        android:roundIcon="@mipmap/ic_launcher_round"
+60-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:34:9-54
+61        android:supportsRtl="true"
+61-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:35:9-35
+62        android:testOnly="true"
+63        android:theme="@style/Theme.BeaconScanner" >
+63-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:36:9-51
+64
+65        <!-- 런처 메인 액티비티 -->
+66        <activity
+66-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:40:9-47:20
+67            android:name="com.example.beaconscanner.MainActivity"
+67-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:41:13-41
+68            android:exported="true" >
+68-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:42:13-36
+69            <intent-filter>
+69-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:43:13-46:29
+70                <action android:name="android.intent.action.MAIN" />
+70-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:44:17-69
+70-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:44:25-66
+71
+72                <category android:name="android.intent.category.LAUNCHER" />
+72-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:45:17-77
+72-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:45:27-74
+73            </intent-filter>
+74        </activity>
+75
+76        <!-- 백그라운드 BLE 스캔 전담 서비스 -->
+77        <service
+77-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:50:9-54:56
+78            android:name="com.example.beaconscanner.BeaconScanService"
+78-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:51:13-46
+79            android:enabled="true"
+79-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:52:13-35
+80            android:exported="false"
+80-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:53:13-37
+81            android:foregroundServiceType="location" />
+81-->C:\BeaconTest-master\app\src\main\AndroidManifest.xml:54:13-53
+82
+83        <receiver
+83-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:18:9-26:20
+84            android:name="org.altbeacon.beacon.startup.StartupBroadcastReceiver"
+84-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:19:13-81
+85            android:exported="false" >
+85-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:20:13-37
+86            <intent-filter>
+86-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:21:13-25:29
+87                <action android:name="android.intent.action.BOOT_COMPLETED" />
+87-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:22:17-79
+87-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:22:25-76
+88                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+88-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:23:17-87
+88-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:23:25-84
+89                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+89-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:24:17-90
+89-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:24:25-87
+90            </intent-filter>
+91        </receiver>
+92
+93        <service
+93-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:28:9-34:38
+94            android:name="org.altbeacon.beacon.service.BeaconService"
+94-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:29:13-70
+95            android:enabled="true"
+95-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:30:13-35
+96            android:exported="false"
+96-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:31:13-37
+97            android:foregroundServiceType="location"
+97-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:32:13-53
+98            android:isolatedProcess="false"
+98-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:33:13-44
+99            android:label="beacon" />
+99-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:34:13-35
 100        <service
-100-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:50:9-57:19
-101            android:name="org.altbeacon.bluetooth.BluetoothTestJob"
-101-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:51:13-68
-102            android:exported="false"
-102-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:52:13-37
-103            android:permission="android.permission.BIND_JOB_SERVICE" >
-103-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:53:13-69
-104            <meta-data
-104-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:54:13-56:46
-105                android:name="jobId"
-105-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:55:17-37
-106                android:value="1799803768" />
-106-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:56:17-43
-107        </service>
-108
-109        <provider
-109-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
-110            android:name="androidx.startup.InitializationProvider"
-110-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
-111            android:authorities="com.example.beaconscanner.androidx-startup"
-111-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
-112            android:exported="false" >
-112-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
-113            <meta-data
-113-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
-114                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-114-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
-115                android:value="androidx.startup" />
-115-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Samba\.gradle\caches\8.9\transforms\73c615fe447ad3f472438c897b3610ce\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
-116            <meta-data
-116-->[androidx.lifecycle:lifecycle-process:2.6.1] C:\Users\Samba\.gradle\caches\8.9\transforms\d9916714218a1747d757d20f2072412d\transformed\lifecycle-process-2.6.1\AndroidManifest.xml:29:13-31:52
-117                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-117-->[androidx.lifecycle:lifecycle-process:2.6.1] C:\Users\Samba\.gradle\caches\8.9\transforms\d9916714218a1747d757d20f2072412d\transformed\lifecycle-process-2.6.1\AndroidManifest.xml:30:17-78
-118                android:value="androidx.startup" />
-118-->[androidx.lifecycle:lifecycle-process:2.6.1] C:\Users\Samba\.gradle\caches\8.9\transforms\d9916714218a1747d757d20f2072412d\transformed\lifecycle-process-2.6.1\AndroidManifest.xml:31:17-49
+100-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:35:9-38:40
+101            android:name="org.altbeacon.beacon.BeaconIntentProcessor"
+101-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:36:13-70
+102            android:enabled="true"
+102-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:37:13-35
+103            android:exported="false" />
+103-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:38:13-37
+104        <service
+104-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:39:9-49:19
+105            android:name="org.altbeacon.beacon.service.ScanJob"
+105-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:40:13-64
+106            android:exported="false"
+106-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:41:13-37
+107            android:permission="android.permission.BIND_JOB_SERVICE" >
+107-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:42:13-69
+108            <meta-data
+108-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:43:13-45:45
+109                android:name="immediateScanJobId"
+109-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:44:17-50
+110                android:value="208352939" />
+110-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:45:17-42
+111            <meta-data
+111-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:46:13-48:45
+112                android:name="periodicScanJobId"
+112-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:47:17-49
+113                android:value="208352940" />
+113-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:48:17-42
+114        </service>
+115        <service
+115-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:50:9-57:19
+116            android:name="org.altbeacon.bluetooth.BluetoothTestJob"
+116-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:51:13-68
+117            android:exported="false"
+117-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:52:13-37
+118            android:permission="android.permission.BIND_JOB_SERVICE" >
+118-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:53:13-69
 119            <meta-data
-119-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
-120                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-120-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
-121                android:value="androidx.startup" />
-121-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
-122        </provider>
+119-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:54:13-56:46
+120                android:name="jobId"
+120-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:55:17-37
+121                android:value="1799803768" />
+121-->[org.altbeacon:android-beacon-library:2.20.3] C:\Users\Samba\.gradle\caches\8.9\transforms\507378afe7b5600ada63d86de1fa0e64\transformed\android-beacon-library-2.20.3\AndroidManifest.xml:56:17-43
+122        </service>
 123
-124        <receiver
-124-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
-125            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-125-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
-126            android:directBootAware="false"
-126-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
-127            android:enabled="true"
-127-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
-128            android:exported="true"
-128-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
-129            android:permission="android.permission.DUMP" >
-129-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
-130            <intent-filter>
-130-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
-131                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-131-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
-131-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
-132            </intent-filter>
-133            <intent-filter>
-133-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
-134                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-134-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
-134-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
-135            </intent-filter>
-136            <intent-filter>
-136-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
-137                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-137-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
-137-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
-138            </intent-filter>
-139            <intent-filter>
-139-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
-140                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-140-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
-140-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\6b818836ff53f7b7bea711c6f99c70c1\transformed\profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
-141            </intent-filter>
-142        </receiver>
-143    </application>
-144
-145</manifest>
+124        <provider
+124-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+125            android:name="androidx.startup.InitializationProvider"
+125-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+126            android:authorities="com.example.beaconscanner.androidx-startup"
+126-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+127            android:exported="false" >
+127-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+128            <meta-data
+128-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+129                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+129-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+130                android:value="androidx.startup" />
+130-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Samba\.gradle\caches\8.9\transforms\4cb18d8bbc992c0eece56ee195f2e51b\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+131            <meta-data
+131-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\Samba\.gradle\caches\8.9\transforms\014d05b7823ad54d3cb6f516e77c3b7a\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:29:13-31:52
+132                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+132-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\Samba\.gradle\caches\8.9\transforms\014d05b7823ad54d3cb6f516e77c3b7a\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:30:17-78
+133                android:value="androidx.startup" />
+133-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\Samba\.gradle\caches\8.9\transforms\014d05b7823ad54d3cb6f516e77c3b7a\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:31:17-49
+134            <meta-data
+134-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+135                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+135-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+136                android:value="androidx.startup" />
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+137        </provider>
+138
+139        <receiver
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+140            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+141            android:directBootAware="false"
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+142            android:enabled="true"
+142-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+143            android:exported="true"
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+144            android:permission="android.permission.DUMP" >
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+145            <intent-filter>
+145-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+146                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+147            </intent-filter>
+148            <intent-filter>
+148-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+149                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+149-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+149-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+150            </intent-filter>
+151            <intent-filter>
+151-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+152                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+152-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+152-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+153            </intent-filter>
+154            <intent-filter>
+154-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+155                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+155-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+155-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Samba\.gradle\caches\8.9\transforms\45ec772ecc935c692f37ea0001ad3c82\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+156            </intent-filter>
+157        </receiver>
+158    </application>
+159
+160</manifest>

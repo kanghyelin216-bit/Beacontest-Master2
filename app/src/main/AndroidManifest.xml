@@ -2,23 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Android 11 이하 호환 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
+    <!-- 1. 기본 네트워크 권한 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Android 12(s) 이상 전용 -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
-        tools:targetApi="s"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <!-- 2. 백그라운드 구동을 위한 Foreground Service 권한 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- 위치 권한 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 3. 위치 권한 (BLE 스캔 및 실내 위치 추정 필수) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
-    <!-- BLE 하드웨어 필수 선언 -->
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <!-- 4. Bluetooth 권한 (Android 11 이하 호환) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+
+    <!-- 5. Bluetooth 권한 (Android 12 이상 전용) -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:targetApi="s" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- 6. BLE 하드웨어 필수 선언 -->
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
 
     <application
         android:name=".App"
@@ -29,14 +35,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BeaconScanner"
         android:networkSecurityConfig="@xml/network_security_config">
+
+        <!-- 런처 메인 액티비티 -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 백그라운드 BLE 스캔 전담 서비스 -->
+        <service
+            android:name=".BeaconScanService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
     </application>
 
 </manifest>
